@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Livewire\PageBuilder;
+
+use App\Models\PageBlock;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
+
+class BlockEditor extends Component
+{
+    use WithFileUploads;
+
+    public PageBlock $block;
+    public array $data = [];
+    public array $imageUploads = [];
+    public ?string $lastSavedAt = null;
+
+    public function mount(PageBlock $block)
+    {
+        $this->block = $block;
+        $this->data = $block->data;
+    }
+
+    public function updateData($key, $value)
+    {
+        $this->data[$key] = $value;
+    }
+
+    public function updatedData()
+    {
+        $this->persist();
+    }
+
+    public function updatedImageUploads($file, $field)
+    {
+        if (!$file) {
+            return;
+        }
+
+        $path = $file->store('page-builder', 'public');
+        $this->data[$field] = Storage::url($path);
+
+        $this->persist();
+    }
+
+    protected function persist()
+    {
+        $this->block->update(['data' => $this->data]);
+        $this->lastSavedAt = now()->format('H:i:s');
+        $this->dispatch('block-saved');
+    }
+
+    public function save()
+    {
+        $this->persist();
+        session()->flash('success', 'Bloque actualizado correctamente');
+    }
+
+    public function render()
+    {
+        $schema = PageBlock::getComponentSchema($this->block->component);
+
+        return view('livewire.page-builder.block-editor', [
+            'schema' => $schema,
+        ]);
+    }
+}

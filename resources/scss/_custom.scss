@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+/* ── Alpine.js ── */
+[x-cloak] { display: none !important; }
+
+/* Bootstrap variable overrides */
+/* Fonts */
+$font-family-base: "proxima-nova", sans-serif;
+$headings-font-family: "larken", serif;
+
+/* Badges */
+$badge-padding-y:                   .4em;
+$badge-padding-x:                   1em;
+/*
+ * Paleta Mediterránea
+ * ─────────────────────────────────────────────
+ * Familia fría:  #d6eee4 → #8ebfbf → #2e6fa3
+ * Familia cálida: #f9f6f0 → #d9bba9 → #bf9180 → #260101
+ */
+
+/* Bootstrap core variables */
+$primary: #2e6fa3;   // azul mediterráneo — sidebar, nav
+$secondary:   #178e97;   // teal polvo — botones, links
+$dark:      #260101;   // borgoña oscuro — textos, fondos
+$light:     #f8f8f8;   // blanco roto cálido — fondos de página
+$info:      #d6eee4;   // menta suave — estados informativos
+
+$link-color: $primary;
+
+/* Escala tipográfica base del panel */
+$font-size-base: 0.9rem;
+
+/* Colores custom (fuera del sistema Bootstrap) */
+$color-terra: #d9bba9;   // arena rosada
+$color-adobe: #bf9180;   // adobe/terracota apagado
+$color-teal:  #8ebfbf;   // alias del primary
+$color-blue:  #2e6fa3;   // alias del secondary
+$color-mint:  #d6eee4;   // alias del info
+$color-dark:  #260101;   // alias del dark
+
+/* ── Utilidades de texto ── */
+.text-terra  { color: $color-terra !important; }
+.text-adobe  { color: $color-adobe !important; }
+.text-teal   { color: $color-teal !important; }
+.text-blue   { color: $color-blue !important; }
+.text-mint   { color: $color-mint !important; }
+
+/* ── Utilidades de fondo ── */
+.bg-terra    { background-color: $color-terra !important; }
+.bg-adobe    { background-color: $color-adobe !important; }
+.bg-teal     { background-color: $color-teal !important; }
+.bg-blue     { background-color: $color-blue !important; }
+.bg-mint     { background-color: $color-mint !important; }
+
+/* ── Fondos suaves (para badges e iconos) ── */
+.bg-terra-soft { background-color: rgba(217, 187, 169, 0.18) !important; }
+.bg-adobe-soft { background-color: rgba(191, 145, 128, 0.15) !important; }
+.bg-teal-soft  { background-color: rgba(142, 191, 191, 0.15) !important; }
+.bg-blue-soft  { background-color: rgba(46,  111, 163, 0.10) !important; }
+.bg-mint-soft  { background-color: rgba(214, 238, 228, 0.40) !important; }

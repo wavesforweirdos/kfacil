@@ -1,0 +1,30 @@
+.icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50rem;
+    flex-shrink: 0;
+
+    // default / --md
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+
+    &--sm {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
+
+    &--md {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+
+    &--lg {
+        width: 56px;
+        height: 56px;
+        font-size: 20px;
+    }
+}

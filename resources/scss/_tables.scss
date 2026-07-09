@@ -1,0 +1,187 @@
+/* ── Accent system — each page wrapper sets these via .accent-{color} ── */
+.accent-teal {
+    --accent: #{$color-teal};
+    --accent-rgb: 142, 191, 191;
+}
+.accent-adobe {
+    --accent: #{$color-adobe};
+    --accent-rgb: 191, 145, 128;
+}
+.accent-blue {
+    --accent: #{$color-blue};
+    --accent-rgb: 46, 111, 163;
+}
+
+/* ── Badges que heredan el accent de la página ── */
+.badge-accent {
+    background-color: var(--accent, #{$primary});
+    color: white;
+}
+
+.badge-accent-soft {
+    background-color: rgba(var(--accent-rgb, 46, 111, 163), 0.15);
+    color: var(--accent, #{$primary});
+}
+
+/* ── Status badges — soft semantic colors armonizados con la paleta ── */
+.badge-status-available {
+    background-color: rgba(#5da68a, 0.15);
+    color: darken(#5da68a, 10%);
+}
+
+.badge-status-reserved {
+    background-color: rgba(#c9904a, 0.15);
+    color: darken(#c9904a, 8%);
+}
+
+.badge-status-closed {
+    background-color: rgba(#b85c5c, 0.15);
+    color: darken(#b85c5c, 8%);
+}
+
+/* ── Table action buttons ── */
+.table-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50rem;
+    border: 1.5px solid rgba($dark, 0.25);
+    background: transparent;
+    color: rgba($dark, 0.6);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+
+    &:hover {
+        border-color: $primary;
+        color: $primary;
+        background-color: rgba($primary, 0.07);
+    }
+
+    &--adobe {
+        border-color: rgba($color-adobe, 0.4);
+        color: $color-adobe;
+
+        &:hover {
+            border-color: $color-adobe;
+            color: $color-adobe;
+            background-color: rgba($color-adobe, 0.07);
+        }
+    }
+
+    &--teal {
+        border-color: rgba($color-teal, 0.4);
+        color: $color-teal;
+
+        &:hover {
+            border-color: $color-teal;
+            color: $color-teal;
+            background-color: rgba($color-teal, 0.07);
+        }
+    }
+
+    &--mint {
+        border-color: darken($color-mint, 20%);
+        color: darken($color-mint, 20%);
+
+        &:hover {
+            border-color: darken($color-mint, 10%);
+            color: darken($color-mint, 10%);
+            background-color: rgba($color-mint, 0.25);
+        }
+    }
+
+    &--danger {
+        border-color: rgba(#dc3545, 0.35);
+        color: rgba(#dc3545, 0.7);
+
+        &:hover {
+            border-color: #dc3545;
+            color: #dc3545;
+            background-color: rgba(#dc3545, 0.07);
+        }
+    }
+}
+
+/* ── Table users ── */
+.table-accent {
+    font-size: 0.875rem;
+
+    thead {
+        vertical-align: middle;
+        tr:first-child th {
+            background-color: color-mix(in srgb, var(--accent, #{$color-teal}) 80%, black);
+            color: white;
+            border: none;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.08rem;
+            text-transform: uppercase;
+            padding: 0.85rem 1rem;
+            vertical-align: middle;
+        }
+    }
+
+    .table-search-row th {
+        background-color: var(--accent, #{$color-teal});
+        border: none;
+        padding: 0.5rem 0.75rem;
+
+        .form-control,
+        .form-select {
+            font-size: 0.8rem;
+            border-radius: 6px;
+            border: none;
+            background-color: white;
+
+            &::placeholder {
+                color: #333;
+                opacity: 0.5;
+            }
+            option {
+                color: #333;
+                opacity: 0.5;
+                background: white;
+            }
+        }
+    }
+
+    tbody tr {
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        transition: background-color 0.15s ease;
+        font-size: 0.72rem;
+        letter-spacing: 0.05rem;
+        text-transform: uppercase;
+
+        &:nth-child(even) td {
+            background-color: rgba(var(--accent-rgb, 142, 191, 191), 0.04);
+        }
+        &.active td {
+            background-color: rgba(var(--accent-rgb, 142, 191, 191), 0.2);
+        }
+
+        &:last-child {
+            border-bottom: none;
+        }
+        &:hover td {
+            background-color: rgba(var(--accent-rgb, 142, 191, 191), 0.09) !important;
+        }
+
+        td {
+            border: none;
+            padding: 0.85rem 1rem;
+            color: #3a3a3a;
+        }
+
+        .badge {
+            font-size: 0.65rem;
+            font-weight: 300;
+            letter-spacing: 0.03rem;
+            text-transform: uppercase;
+        }
+    }
+}

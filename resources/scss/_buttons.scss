@@ -1,0 +1,53 @@
+a {
+    color: $primary;
+    text-decoration: none;
+}
+
+.btn {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    min-height: 50px;
+    letter-spacing: 0.06rem;
+    font-size: 15px;
+    font-weight: 300;
+    text-transform: uppercase;
+
+    &-primary {
+        color: white;
+        text-transform: uppercase;
+
+        &:hover {
+            color: white;
+        }
+    }
+
+    /* ── Botones que heredan el accent de la página ── */
+    &-accent {
+        background-color: var(--accent, #{$primary});
+        border-color: var(--accent, #{$primary});
+        color: white;
+
+        &:hover, &:focus {
+            background-color: color-mix(in srgb, var(--accent, #{$primary}) 82%, black);
+            border-color: color-mix(in srgb, var(--accent, #{$primary}) 82%, black);
+            color: white;
+        }
+    }
+
+    &-outline-accent {
+        background-color: transparent;
+        border-color: var(--accent, #{$primary});
+        color: var(--accent, #{$primary});
+
+        &:hover, &:focus {
+            background-color: rgba(var(--accent-rgb, 46, 111, 163), 0.1);
+            border-color: var(--accent, #{$primary});
+            color: var(--accent, #{$primary});
+        }
+    }
+}
+
+.btn--pill {
+    min-height: unset;
+}

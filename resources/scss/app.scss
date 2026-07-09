@@ -1,0 +1,19 @@
+@import "fonts";
+@import "mixins";
+@import "custom";
+
+/* Import Bootstrap SCSS */
+@import "bootstrap/scss/bootstrap";
+
+/* Custom utilities */
+[x-cloak] {
+    display: none !important;
+}
+
+@import "buttons";
+@import "cards";
+@import "forms";
+@import "icons";
+@import "tables";
+@import "pagination";
+@import "transitions";
