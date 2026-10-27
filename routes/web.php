@@ -37,9 +37,9 @@ Route::middleware('auth')->group(function () {
 */
 
 Route::middleware('auth')->group(function () {
-    Route::resource('property-types', PropertyTypeController::class);
-    Route::resource('property-operations', PropertyOperationController::class);
-    Route::resource('property-statuses', PropertyStatusController::class);
+    Route::resource('property-types', PropertyTypeController::class)->except(['show']);
+    Route::resource('property-operations', PropertyOperationController::class)->except(['show']);
+    Route::resource('property-statuses', PropertyStatusController::class)->except(['show']);
 });
 
 /*
@@ -77,7 +77,7 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::resource('users', UserController::class);
 
-        Route::resource('properties', PropertyController::class);
+        Route::resource('properties', PropertyController::class)->except(['create', 'edit']);
         Route::post('properties/{property}/clone', [PropertyController::class, 'clone'])->name('properties.clone');
 
     });
@@ -100,7 +100,7 @@ Route::middleware(['auth', 'role:agente'])
 
         Route::resource('users', UserController::class);
 
-        Route::resource('properties', PropertyController::class);
+        Route::resource('properties', PropertyController::class)->except(['create', 'edit']);
         Route::post('properties/{property}/clone', [PropertyController::class, 'clone'])->name('properties.clone');
 
     });
