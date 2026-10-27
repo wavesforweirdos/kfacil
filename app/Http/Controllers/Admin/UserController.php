@@ -118,6 +118,11 @@ class UserController extends Controller
 
         unset($data['remove_avatar']);
 
+        if ($this->isLastAdmin($user) && (int) $data['role_id'] !== $user->role_id) {
+            return back()->withInput()
+                ->with('error', 'Tiene que quedar al menos un administrador.');
+        }
+
         $user->update($data);
 
         return redirect()->route('admin.users.index')
@@ -131,9 +136,19 @@ class UserController extends Controller
                 ->with('error', __('admin_users.cannot_delete_self'));
         }
 
+        if ($this->isLastAdmin($user)) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Tiene que quedar al menos un administrador.');
+        }
+
         $user->delete();
 
         return redirect()->route('admin.users.index')
             ->with('success', __('admin_users.success_delete'));
+    }
+
+    private function isLastAdmin(User $user): bool
+    {
+        return $user->isAdmin() && User::whereHas('role', fn ($q) => $q->where('name', 'admin'))->count() <= 1;
     }
 }

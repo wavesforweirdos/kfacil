@@ -53,7 +53,7 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function CheckRole(): bool
+    public function isAdmin(): bool
     {
         return $this->role?->name === 'admin';
     }
@@ -83,7 +83,7 @@ class User extends Authenticatable
     public function hasPermission($permission): bool
     {
         // Admin tiene todos los permisos
-        if ($this->CheckRole()) {
+        if ($this->isAdmin()) {
             return true;
         }
 
