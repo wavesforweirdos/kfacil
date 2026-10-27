@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,9 +18,9 @@ class AuthenticationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+    public function test_admins_are_redirected_to_the_admin_dashboard_after_login(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role_id' => Role::create(['name' => 'admin'])->id]);
 
         $response = $this->post('/login', [
             'email' => $user->email,
@@ -27,7 +28,30 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('admin.dashboard'));
+    }
+
+    public function test_agents_are_redirected_to_the_agent_dashboard_after_login(): void
+    {
+        $user = User::factory()->create(['role_id' => Role::create(['name' => 'agente'])->id]);
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('agente.dashboard'));
+    }
+
+    public function test_users_without_a_role_get_a_403_after_login(): void
+    {
+        $user = User::factory()->create();
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ])->assertForbidden();
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
