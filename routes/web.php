@@ -98,8 +98,6 @@ Route::middleware(['auth', 'role:agente'])
             return view('admin.dashboard');
         })->name('dashboard');
 
-        Route::resource('users', UserController::class);
-
         Route::resource('properties', PropertyController::class)->except(['create', 'edit']);
         Route::post('properties/{property}/clone', [PropertyController::class, 'clone'])->name('properties.clone');
 
