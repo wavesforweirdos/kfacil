@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
-        return match ($user->role->name) {
+        return match ($user->role?->name) {
             'admin' => redirect()->route('admin.dashboard'),
             'agente' => redirect()->route('agente.dashboard'),
             default => abort(403),

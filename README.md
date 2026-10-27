@@ -1,10 +1,12 @@
 # KFacil Inmobiliaria - Puesta en marcha local
 
+Aplicacion de gestion inmobiliaria con Laravel 13, Livewire 4, Blade y Bootstrap/Tailwind. Las pruebas (`php artisan test`) se ejecutan en CI con GitHub Actions sobre SQLite en memoria.
+
 Guia breve para ejecutar la aplicacion en entorno local.
 
 ## Requisitos
 
-- PHP 8.2+
+- PHP 8.3+
 - Composer
 - Node.js 20+ y npm
 - MySQL 8+
