@@ -6,6 +6,7 @@ use App\Models\PageBlock;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class BlockEditor extends Component
 {
@@ -35,6 +36,25 @@ class BlockEditor extends Component
     public function updatedImageUploads($file, $field)
     {
         if (!$file) {
+            return;
+        }
+
+        // Solo imágenes: sin SVG (puede llevar scripts) ni otros tipos de archivo.
+        $validator = Validator::make(
+            ['file' => $file],
+            ['file' => ['image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120']],
+            [
+                'file.image' => 'El archivo tiene que ser una imagen.',
+                'file.mimes' => 'Solo se admiten imágenes JPG, PNG, WEBP o GIF.',
+                'file.max' => 'La imagen no puede pesar más de 5 MB.',
+            ],
+        );
+
+        if ($validator->fails()) {
+            unset($this->imageUploads[$field]);
+            $file->delete();
+            $this->addError("imageUploads.{$field}", $validator->errors()->first('file'));
+
             return;
         }
 
