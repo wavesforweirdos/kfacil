@@ -355,6 +355,7 @@
                                 <x-admin.table-actions>
                                     <x-admin.table-action icon="fa-eye" variant="teal" title="Ver"
                                         @click="openDrawer('show', {{ $property->id }})" />
+                                    @can('update', $property)
                                     <x-admin.table-action icon="fa-copy" variant="mint" title="Clonar"
                                         @click="$dispatch('confirm-show', {
                                                 title: 'Clonar inmueble',
@@ -367,6 +368,8 @@
                                             })" />
                                     <x-admin.table-action icon="fa-pen" variant="adobe" title="Editar"
                                         @click="openDrawer('edit', {{ $property->id }})" />
+                                    @endcan
+                                    @can('delete', $property)
                                     <x-admin.table-action icon="fa-trash" variant="danger" title="Eliminar"
                                         @click="$dispatch('confirm-show', {
                                                 title: '¿Eliminar inmueble?',
@@ -377,6 +380,7 @@
                                                 url: '{{ route(auth()->user()->panelPrefix() . '.properties.destroy', $property) }}',
                                                 method: 'DELETE'
                                             })" />
+                                    @endcan
                                 </x-admin.table-actions>
                             </td>
                         </tr>

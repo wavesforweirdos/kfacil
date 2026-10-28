@@ -20,6 +20,8 @@ class PropertyController extends Controller
 
     public function index()
     {
+        $this->authorize('viewAny', Property::class);
+
         $request = request();
         $sort = in_array($request->get('sort'), self::ALLOWED_SORTS, true)
             ? $request->get('sort') : 'created_at';
@@ -72,6 +74,8 @@ class PropertyController extends Controller
 
     public function show(Property $property)
     {
+        $this->authorize('view', $property);
+
         $property->load('images', 'propertyType', 'propertyOperation', 'propertyStatus');
 
         return response()->json([
@@ -108,6 +112,8 @@ class PropertyController extends Controller
 
     public function store(StorePropertyRequest $request)
     {
+        $this->authorize('create', Property::class);
+
         $data = $request->validated();
         $data['user_id'] = auth()->id();
 
@@ -148,6 +154,8 @@ class PropertyController extends Controller
 
     public function update(UpdatePropertyRequest $request, Property $property)
     {
+        $this->authorize('update', $property);
+
         $data = $request->validated();
 
         // Resolve reference
@@ -216,6 +224,8 @@ class PropertyController extends Controller
 
     public function destroy(Property $property)
     {
+        $this->authorize('delete', $property);
+
         if ($property->main_image && !str_starts_with($property->main_image, 'http')) {
             Storage::disk('public')->delete($property->main_image);
         }
@@ -234,6 +244,8 @@ class PropertyController extends Controller
 
     public function clone(Property $property)
     {
+        $this->authorize('update', $property);
+
         // Strip any existing clone suffix (-1, -2, ...) to get the true base reference
         $baseRef = preg_replace('/-\d+$/', '', $property->reference);
         $suffix  = 1;
