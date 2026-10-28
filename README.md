@@ -39,6 +39,8 @@ npm run dev
 
 La app quedara disponible en `http://127.0.0.1:8000`.
 
+`composer dev` arranca el servidor, la cola y Vite. Los logs en vivo (`composer dev:logs`, con Laravel Pail) necesitan la extension `pcntl`, que no existe en Windows: usalos desde Linux, macOS o WSL, o mira `storage/logs/laravel.log`.
+
 ## Usuario de prueba (admin)
 
 Si ejecutaste `php artisan db:seed`, se crea un usuario administrador:
