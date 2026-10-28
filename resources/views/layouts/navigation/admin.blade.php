@@ -12,6 +12,13 @@
             'icon' => 'fa-file-lines',
             'color' => 'blue',
         ],
+        [
+            'label' => __('admin_sidebar.messages'),
+            'route' => route('messages.index'),
+            'icon' => 'fa-envelope',
+            'color' => 'blue',
+            'badge' => \App\Models\ContactMessage::unread()->count(),
+        ],
     ];
 
     // Solo los administradores gestionan usuarios.
@@ -71,7 +78,8 @@
                         </div>
                     </div>
                 @else
-                    <x-admin.sidebar-card :route="$item['route']" :icon="$item['icon']" :label="$item['label']"
+                    <x-admin.sidebar-card :route="$item['route']" :icon="$item['icon']"
+                        :label="$item['label'] . (($item['badge'] ?? 0) > 0 ? ' (' . $item['badge'] . ')' : '')"
                         :color="$item['color']" />
                 @endif
             </div>

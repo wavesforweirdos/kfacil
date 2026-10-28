@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PropertyController;
@@ -54,6 +56,12 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('pages', PageController::class)->except(['show']);
     Route::put('pages/{page}/publish', [PageController::class, 'publish'])->name('pages.publish');
     Route::put('pages/{page}/unpublish', [PageController::class, 'unpublish'])->name('pages.unpublish');
+});
+
+// Formulario de contacto de la web pública y bandeja de mensajes del CRM
+Route::post('/contacto', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
+Route::middleware('auth')->group(function () {
+    Route::resource('messages', ContactMessageController::class)->only(['index', 'show', 'destroy']);
 });
 
 // Public properties (fixed property-detail structure)

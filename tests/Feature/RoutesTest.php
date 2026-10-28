@@ -30,7 +30,7 @@ class RoutesTest extends TestCase
     {
         $this->seed();
 
-        foreach (['/inicio', '/servicios', '/propiedades', '/inmuebles/1'] as $url) {
+        foreach (['/inicio', '/servicios', '/propiedades', '/contacto', '/inmuebles/1'] as $url) {
             $this->get($url)->assertOk();
         }
     }
