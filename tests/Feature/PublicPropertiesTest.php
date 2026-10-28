@@ -65,9 +65,9 @@ class PublicPropertiesTest extends TestCase
         $free = $this->withStatus('disponible');
         $admin = User::factory()->create(['role_id' => Role::firstOrCreate(['name' => 'admin'])->id]);
 
-        $this->get("/inmuebles/{$free->id}")->assertOk();
-        $this->get("/inmuebles/{$sold->id}")->assertNotFound();
-        $this->actingAs($admin)->get("/inmuebles/{$sold->id}")->assertOk();
+        $this->get($free->publicUrl())->assertOk();
+        $this->get($sold->publicUrl())->assertNotFound();
+        $this->actingAs($admin)->get($sold->publicUrl())->assertOk();
     }
 
     public function test_pagination_keeps_the_search_filters(): void

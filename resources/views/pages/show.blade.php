@@ -4,10 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="generator" content="Hostinger Horizons">
 
     <!-- SEO -->
-    <title>{{ $page->meta_title ?? $page->title }} | K Fácil Inmobiliaria</title>
+    <title>{{ $page->meta_title ?? $page->title }} | {{ config('app.name') }}</title>
+    <link rel="canonical" href="{{ $page->type === 'home' ? url('/') : url($page->slug) }}">
+    @unless ($page->published)
+        <meta name="robots" content="noindex, nofollow">
+    @endunless
     <meta name="description" content="{{ $page->meta_description ?? $page->description }}">
     <meta name="keywords" content="{{ $page->meta_keywords }}">
     
@@ -15,6 +18,10 @@
     <meta property="og:title" content="{{ $page->meta_title ?? $page->title }}">
     <meta property="og:description" content="{{ $page->meta_description ?? $page->description }}">
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ config('app.name') }}">
+    <meta property="og:url" content="{{ $page->type === 'home' ? url('/') : url($page->slug) }}">
+    <meta property="og:image" content="{{ asset('images/logo_color.png') }}">
+    <meta name="twitter:card" content="summary">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

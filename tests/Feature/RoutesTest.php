@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Property;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
@@ -30,8 +31,10 @@ class RoutesTest extends TestCase
     {
         $this->seed();
 
-        foreach (['/inicio', '/servicios', '/propiedades', '/contacto', '/inmuebles/1'] as $url) {
+        foreach (['/inicio', '/servicios', '/propiedades', '/contacto'] as $url) {
             $this->get($url)->assertOk();
         }
+
+        $this->get(Property::firstOrFail()->publicUrl())->assertOk();
     }
 }

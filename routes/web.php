@@ -11,6 +11,7 @@ use App\Http\Controllers\PropertyTypeController;
 use App\Http\Controllers\PropertyOperationController;
 use App\Http\Controllers\PropertyStatusController;
 use App\Http\Controllers\PublicPropertyController;
+use App\Http\Controllers\SeoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -69,7 +70,10 @@ Route::middleware('auth')->group(function () {
 
 // Public properties (fixed property-detail structure)
 Route::get('/inmuebles', [PublicPropertyController::class, 'index'])->name('public.properties.index');
-Route::get('/inmuebles/{property}', [PublicPropertyController::class, 'show'])->name('public.properties.show');
+Route::get('/inmuebles/{property}/{slug?}', [PublicPropertyController::class, 'show'])->name('public.properties.show');
+
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 
 /*
 |--------------------------------------------------------------------------
