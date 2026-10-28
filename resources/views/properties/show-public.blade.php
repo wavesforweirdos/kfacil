@@ -4,8 +4,45 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $property->title }} | K Facil Inmobiliaria</title>
-    <meta name="description" content="{{ \Illuminate\Support\Str::limit(strip_tags($property->description), 150) }}">
+    @php
+        $seoDescription = \Illuminate\Support\Str::limit(trim(strip_tags((string) $property->description)) ?: $property->title, 155);
+        $seoImage = $property->mainImageUrl();
+    @endphp
+    <title>{{ $property->title }}{{ $property->city ? ' en '.$property->city : '' }} | {{ config('app.name') }}</title>
+    <meta name="description" content="{{ $seoDescription }}">
+    <link rel="canonical" href="{{ $property->publicUrl() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ config('app.name') }}">
+    <meta property="og:title" content="{{ $property->title }}">
+    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:url" content="{{ $property->publicUrl() }}">
+    @if ($seoImage)
+        <meta property="og:image" content="{{ $seoImage }}">
+    @endif
+    <meta name="twitter:card" content="{{ $seoImage ? 'summary_large_image' : 'summary' }}">
+    <script type="application/ld+json">
+        {!! json_encode(array_filter([
+            '@context' => 'https://schema.org',
+            '@type' => 'RealEstateListing',
+            'name' => $property->title,
+            'description' => $seoDescription,
+            'url' => $property->publicUrl(),
+            'image' => $seoImage,
+            'datePosted' => optional($property->created_at)->toDateString(),
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => (float) $property->price,
+                'priceCurrency' => 'EUR',
+            ],
+            'address' => array_filter([
+                '@type' => 'PostalAddress',
+                'streetAddress' => $property->address,
+                'addressLocality' => $property->city ?: $property->locality,
+                'addressRegion' => $property->province,
+                'addressCountry' => $property->country,
+            ]),
+        ]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}
+    </script>
     @vite(['resources/scss/app.scss', 'resources/js/app.js'])
 </head>
 

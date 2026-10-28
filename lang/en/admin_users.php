@@ -8,11 +8,11 @@ return [
     'table_role' => 'Role',
     'table_actions' => 'Actions',
     'pagination_info' => 'Showing :from to :to of :total users',
-    'search_role'  => 'All roles',
-    'search_name'  => 'Search by name...',
+    'search_role' => 'All roles',
+    'search_name' => 'Search by name...',
     'search_email' => 'Search by email...',
     'clear' => 'Clear filters',
-    
+
     'create_title' => 'Create new user',
     'field_name' => 'Name',
     'field_email' => 'Email',

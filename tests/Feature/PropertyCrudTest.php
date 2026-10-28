@@ -121,7 +121,7 @@ class PropertyCrudTest extends TestCase
     {
         $agent = $this->staff('agente');
         $path = UploadedFile::fake()->image('p.jpg')->store('properties', 'public');
-        $property = Property::factory()->create(['main_image' => $path]);
+        $property = Property::factory()->create(['user_id' => $agent->id, 'main_image' => $path]);
 
         $this->actingAs($agent)->delete("/agente/properties/{$property->id}")->assertRedirect();
 

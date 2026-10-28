@@ -3,17 +3,21 @@
 namespace App\Livewire\PageBuilder;
 
 use App\Models\PageBlock;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Storage;
 
 class BlockEditor extends Component
 {
     use WithFileUploads;
 
     public PageBlock $block;
+
     public array $data = [];
+
     public array $imageUploads = [];
+
     public ?string $lastSavedAt = null;
 
     public function mount(PageBlock $block)
@@ -34,7 +38,26 @@ class BlockEditor extends Component
 
     public function updatedImageUploads($file, $field)
     {
-        if (!$file) {
+        if (! $file) {
+            return;
+        }
+
+        // Solo imágenes: sin SVG (puede llevar scripts) ni otros tipos de archivo.
+        $validator = Validator::make(
+            ['file' => $file],
+            ['file' => ['image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120']],
+            [
+                'file.image' => 'El archivo tiene que ser una imagen.',
+                'file.mimes' => 'Solo se admiten imágenes JPG, PNG, WEBP o GIF.',
+                'file.max' => 'La imagen no puede pesar más de 5 MB.',
+            ],
+        );
+
+        if ($validator->fails()) {
+            unset($this->imageUploads[$field]);
+            $file->delete();
+            $this->addError("imageUploads.{$field}", $validator->errors()->first('file'));
+
             return;
         }
 

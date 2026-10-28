@@ -19,6 +19,7 @@ class PropertyImage extends Model
         if (str_starts_with($this->path, 'http')) {
             return $this->path;
         }
-        return asset('storage/' . $this->path);
+
+        return asset('storage/'.$this->path);
     }
 }

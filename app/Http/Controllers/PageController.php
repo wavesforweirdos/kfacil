@@ -188,7 +188,7 @@ class PageController extends Controller
     // Public views
     public function show(Page $page)
     {
-        if (!$page->published && !auth()->check()) {
+        if (! $page->published && ! auth()->check()) {
             abort(404);
         }
 

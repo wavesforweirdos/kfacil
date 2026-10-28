@@ -25,6 +25,7 @@ class PropertyStatus extends Model
         if (trans()->has($transKey)) {
             return trans($transKey);
         }
+
         return $this->label;
     }
 

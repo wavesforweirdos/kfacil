@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Validation\Rules\Password;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
     public function show(User $user)
     {
         return response()->json([
-            'id'      => $user->id,
-            'name'    => $user->name,
-            'email'   => $user->email,
-            'avatar'  => $user->avatar,
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'avatar' => $user->avatar,
             'role_id' => $user->role_id,
-            'role'    => $user->role ? ['name' => $user->role->name] : null,
+            'role' => $user->role ? ['name' => $user->role->name] : null,
         ]);
     }
 
@@ -31,17 +31,18 @@ class UserController extends Controller
 
         return view('admin.users.create', compact('roles'));
     }
+
     public function index(Request $request)
     {
         $allowedSorts = ['name', 'email', 'created_at', 'role'];
         $sort = in_array($request->get('sort'), $allowedSorts, true) ? $request->get('sort') : 'created_at';
-        $dir  = $request->get('dir') === 'asc' ? 'asc' : 'desc';
+        $dir = $request->get('dir') === 'asc' ? 'asc' : 'desc';
 
         $users = User::query()
             ->leftJoin('roles', 'users.role_id', '=', 'roles.id')
             ->select('users.*')
-            ->when($request->filled('name'), fn($q) => $q->where('users.name', 'like', '%' . $request->name . '%'))
-            ->when($request->filled('email'), fn($q) => $q->where('users.email', 'like', '%' . $request->email . '%'))
+            ->when($request->filled('name'), fn ($q) => $q->where('users.name', 'like', '%'.$request->name.'%'))
+            ->when($request->filled('email'), fn ($q) => $q->where('users.email', 'like', '%'.$request->email.'%'))
             ->when($request->filled('role_id'), function ($q) use ($request) {
                 $q->where('roles.id', $request->role_id);
             })
@@ -53,6 +54,7 @@ class UserController extends Controller
 
         return view('admin.users.index', compact('users', 'roles', 'sort', 'dir'));
     }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -89,14 +91,14 @@ class UserController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
             'role_id' => 'required|exists:roles,id',
             'password' => ['nullable', Password::min(8)->mixedCase()->numbers()],
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'remove_avatar' => ['nullable', 'boolean'],
         ]);
 
-        if (!empty($data['remove_avatar'])) {
+        if (! empty($data['remove_avatar'])) {
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
@@ -110,7 +112,7 @@ class UserController extends Controller
             $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         } else {
             unset($data['password']);
@@ -128,7 +130,7 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')
             ->with('success', __('admin_users.success_update'));
     }
-    
+
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {

@@ -17,6 +17,7 @@ class PropertyOperationController extends Controller
     public function index()
     {
         $operations = PropertyOperation::orderBy('sort_order')->paginate(10);
+
         return view('property-operations.index', compact('operations'));
     }
 
@@ -51,7 +52,7 @@ class PropertyOperationController extends Controller
     public function update(Request $request, PropertyOperation $propertyOperation)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:100|unique:property_operations,name,' . $propertyOperation->id,
+            'name' => 'required|string|max:100|unique:property_operations,name,'.$propertyOperation->id,
             'label' => 'required|string|max:255',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
@@ -72,7 +73,7 @@ class PropertyOperationController extends Controller
 
         if ($count > 0) {
             throw ValidationException::withMessages([
-                'name' => "No se puede eliminar este tipo de operación porque está en uso en $count propiedad(es)."
+                'name' => "No se puede eliminar este tipo de operación porque está en uso en $count propiedad(es).",
             ]);
         }
 

@@ -37,7 +37,9 @@ php artisan serve
 npm run dev
 ```
 
-La app quedara disponible en `http://127.0.0.1:8000`.
+La app quedara disponible en `http://127.0.0.1:8000` (no en `http://localhost`, que usaria el puerto 80). Es el valor de `APP_URL` en `.env.example`: las imagenes subidas desde el panel (logo del navbar, bloques de paginas) se generan a partir de el, asi que si cambias el puerto, cambialo tambien en tu `.env`.
+
+`composer dev` arranca el servidor, la cola y Vite. Los logs en vivo (`composer dev:logs`, con Laravel Pail) necesitan la extension `pcntl`, que no existe en Windows: usalos desde Linux, macOS o WSL, o mira `storage/logs/laravel.log`.
 
 ## Usuario de prueba (admin)
 
@@ -50,6 +52,8 @@ Si ejecutaste `php artisan db:seed`, se crea un usuario administrador:
 
 ```bash
 php artisan test          # Ejecutar pruebas
+composer lint             # Comprobar el estilo del codigo (Laravel Pint; la CI lo exige)
+composer lint:fix         # Corregir el estilo automaticamente
 php artisan migrate:fresh --seed
 ```
 

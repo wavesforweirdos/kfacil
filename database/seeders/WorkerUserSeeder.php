@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Role;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class WorkerUserSeeder extends Seeder
@@ -18,13 +17,15 @@ class WorkerUserSeeder extends Seeder
         $agentRole = Role::where('name', 'agente')->first();
 
         for ($i = 1; $i <= 20; $i++) {
-            User::create([
-                'name' => 'User ' . $i,
-                'email' => 'user_' . $i . '@kfacil.test',
-                'password' => Hash::make('password123'),
-                'role_id' => $agentRole->id,
-                'avatar' => null,
-            ]);
+            User::firstOrCreate(
+                ['email' => 'user_'.$i.'@kfacil.test'],
+                [
+                    'name' => 'User '.$i,
+                    'password' => Hash::make('password123'),
+                    'role_id' => $agentRole->id,
+                    'avatar' => null,
+                ],
+            );
         }
     }
 }

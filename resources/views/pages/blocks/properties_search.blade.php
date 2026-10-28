@@ -82,12 +82,7 @@
 
         <!-- Properties Display -->
         @php
-            $properties = \App\Models\Property::query()
-                ->when(request('search'), fn($q) => $q->where('title', 'like', '%' . request('search') . '%'))
-                ->when(request('type'), fn($q) => $q->where('type_id', request('type')))
-                ->when(request('min_price'), fn($q) => $q->where('price', '>=', request('min_price')))
-                ->when(request('max_price'), fn($q) => $q->where('price', '<=', request('max_price')))
-                ->paginate($itemsPerPage);
+            $properties = \App\Support\PublicProperties::search(request()->only(['search', 'type', 'min_price', 'max_price']), (int) $itemsPerPage);
         @endphp
 
         @if($properties->count() > 0)
@@ -95,10 +90,10 @@
                 <!-- List View -->
                 <div class="space-y-4">
                     @foreach($properties as $property)
-                        <a href="{{ route('public.properties.show', $property) }}" class="flex gap-4 bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition">
+                        <a href="{{ $property->publicUrl() }}" class="flex gap-4 bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition">
                             <div class="w-48 h-40 flex-shrink-0 bg-gray-200">
-                                @if($property->mainImageUrl())
-                                    <img src="{{ $property->mainImageUrl() }}" alt="{{ $property->title }}" class="w-full h-full object-cover">
+                                @if($property->mainImageThumbUrl())
+                                    <img src="{{ $property->mainImageThumbUrl() }}" alt="{{ $property->title }}" class="w-full h-full object-cover">
                                 @endif
                             </div>
 
@@ -129,10 +124,10 @@
                 <!-- Cards View -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @foreach($properties as $property)
-                        <a href="{{ route('public.properties.show', $property) }}" class="group bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition">
+                        <a href="{{ $property->publicUrl() }}" class="group bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition">
                             <div class="h-64 bg-gray-200 overflow-hidden relative">
-                                @if($property->mainImageUrl())
-                                    <img src="{{ $property->mainImageUrl() }}" alt="{{ $property->title }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                                @if($property->mainImageThumbUrl())
+                                    <img src="{{ $property->mainImageThumbUrl() }}" alt="{{ $property->title }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
                                 @endif
                                 <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
                                     {{ number_format($property->price, 0, ',', '.') }}€
@@ -159,10 +154,10 @@
                 <!-- Grid View (default) -->
                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     @foreach($properties as $property)
-                        <a href="{{ route('public.properties.show', $property) }}" class="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition">
+                        <a href="{{ $property->publicUrl() }}" class="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition">
                             <div class="h-48 bg-gray-200 overflow-hidden relative">
-                                @if($property->mainImageUrl())
-                                    <img src="{{ $property->mainImageUrl() }}" alt="{{ $property->title }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                                @if($property->mainImageThumbUrl())
+                                    <img src="{{ $property->mainImageThumbUrl() }}" alt="{{ $property->title }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
                                 @endif
                                 <div class="absolute top-3 right-3 bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold">
                                     {{ number_format($property->price, 0, ',', '.') }}€

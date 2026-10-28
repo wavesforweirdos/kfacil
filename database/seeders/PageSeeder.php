@@ -16,11 +16,11 @@ class PageSeeder extends Seeder
     {
         $admin = User::where('role_id', 1)->first();
 
-        if (!$admin) {
+        if (! $admin) {
             $admin = User::first();
         }
 
-        if (!$admin) {
+        if (! $admin || Page::exists()) {
             return;
         }
 

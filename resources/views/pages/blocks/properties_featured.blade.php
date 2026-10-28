@@ -7,10 +7,7 @@
         default => 'grid-cols-1 md:grid-cols-3'
     };
     
-    $properties = \App\Models\Property::query()
-        ->latest()
-        ->limit($limit)
-        ->get();
+    $properties = \App\Support\PublicProperties::featured((int) $limit);
 @endphp
 
 <section class="py-20 px-4 bg-white">
@@ -26,11 +23,11 @@
         @if($properties->count() > 0)
             <div class="grid {{ $columns }} gap-8">
                 @foreach($properties as $property)
-                    <a href="{{ route('public.properties.show', $property) }}" class="group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition">
+                    <a href="{{ $property->publicUrl() }}" class="group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition">
                         <div class="relative overflow-hidden bg-gray-200 h-64">
-                            @if($property->mainImageUrl())
+                            @if($property->mainImageThumbUrl())
                                 <img 
-                                    src="{{ $property->mainImageUrl() }}" 
+                                    src="{{ $property->mainImageThumbUrl() }}" 
                                     alt="{{ $property->title }}"
                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-300"
                                 />
