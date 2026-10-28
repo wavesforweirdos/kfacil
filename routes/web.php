@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\PageController;
+use App\Models\Page;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\PropertyTypeController;
@@ -13,8 +14,10 @@ use App\Http\Controllers\PublicPropertyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    $home = Page::where('type', 'home')->where('published', true)->first();
+
+    return $home ? app(PageController::class)->show($home) : view('welcome');
+})->name('home');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
