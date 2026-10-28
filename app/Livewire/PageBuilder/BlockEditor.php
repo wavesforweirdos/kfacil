@@ -3,18 +3,21 @@
 namespace App\Livewire\PageBuilder;
 
 use App\Models\PageBlock;
-use Livewire\Component;
-use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class BlockEditor extends Component
 {
     use WithFileUploads;
 
     public PageBlock $block;
+
     public array $data = [];
+
     public array $imageUploads = [];
+
     public ?string $lastSavedAt = null;
 
     public function mount(PageBlock $block)
@@ -35,7 +38,7 @@ class BlockEditor extends Component
 
     public function updatedImageUploads($file, $field)
     {
-        if (!$file) {
+        if (! $file) {
             return;
         }
 

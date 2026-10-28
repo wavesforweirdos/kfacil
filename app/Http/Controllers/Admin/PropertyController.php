@@ -7,13 +7,10 @@ use App\Http\Requests\StorePropertyRequest;
 use App\Http\Requests\UpdatePropertyRequest;
 use App\Models\Property;
 use App\Models\PropertyImage;
+use App\Models\PropertyOperation;
 use App\Models\PropertyStatus;
 use App\Models\PropertyType;
-use App\Models\PropertyOperation;
-use App\Models\User;
 use App\Support\ImageOptimizer;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class PropertyController extends Controller
 {
@@ -31,15 +28,15 @@ class PropertyController extends Controller
         $properties = Property::query()
             ->select('properties.*')
             ->with(['user', 'propertyType', 'propertyOperation', 'propertyStatus'])
-            ->when($request->filled('reference'), fn($q) => $q->where('reference', 'like', '%' . $request->reference . '%'))
-            ->when($request->filled('title'), fn($q) => $q->where('title', 'like', '%' . $request->title . '%'))
-            ->when($request->filled('city'), fn($q) => $q->where('city', 'like', '%' . $request->city . '%'))
-            ->when($request->filled('type'), fn($q) => $q->whereHas('propertyType', fn($sq) => $sq->where('name', $request->type)))
-            ->when($request->filled('operation'), fn($q) => $q->whereHas('propertyOperation', fn($sq) => $sq->where('name', $request->operation)))
-            ->when($request->filled('status'), fn($q) => $q->whereHas('propertyStatus', fn($sq) => $sq->where('name', $request->status)))
-            ->when($request->filled('price_min'), fn($q) => $q->where('price', '>=', $request->price_min))
-            ->when($request->filled('price_max'), fn($q) => $q->where('price', '<=', $request->price_max))
-            ->tap(fn($q) => $this->applySort($q, $sort, $dir))
+            ->when($request->filled('reference'), fn ($q) => $q->where('reference', 'like', '%'.$request->reference.'%'))
+            ->when($request->filled('title'), fn ($q) => $q->where('title', 'like', '%'.$request->title.'%'))
+            ->when($request->filled('city'), fn ($q) => $q->where('city', 'like', '%'.$request->city.'%'))
+            ->when($request->filled('type'), fn ($q) => $q->whereHas('propertyType', fn ($sq) => $sq->where('name', $request->type)))
+            ->when($request->filled('operation'), fn ($q) => $q->whereHas('propertyOperation', fn ($sq) => $sq->where('name', $request->operation)))
+            ->when($request->filled('status'), fn ($q) => $q->whereHas('propertyStatus', fn ($sq) => $sq->where('name', $request->status)))
+            ->when($request->filled('price_min'), fn ($q) => $q->where('price', '>=', $request->price_min))
+            ->when($request->filled('price_max'), fn ($q) => $q->where('price', '<=', $request->price_max))
+            ->tap(fn ($q) => $this->applySort($q, $sort, $dir))
             ->paginate(10)
             ->withQueryString();
 
@@ -80,34 +77,34 @@ class PropertyController extends Controller
         $property->load('images', 'propertyType', 'propertyOperation', 'propertyStatus');
 
         return response()->json([
-            'id'          => $property->id,
-            'title'       => $property->title,
+            'id' => $property->id,
+            'title' => $property->title,
             'description' => $property->description,
-            'type_id'     => $property->type_id,
+            'type_id' => $property->type_id,
             'operation_id' => $property->operation_id,
-            'status_id'   => $property->status_id,
-            'type'        => $property->propertyType?->name ?? $property->type,
-            'operation'   => $property->propertyOperation?->name ?? $property->operation,
-            'status'      => $property->propertyStatus?->name ?? $property->status,
-            'price'       => $property->price,
-            'surface'     => $property->surface,
-            'rooms'       => $property->rooms,
-            'bathrooms'   => $property->bathrooms,
-            'address'     => $property->address,
-            'city'        => $property->city,
-            'locality'    => $property->locality,
-            'province'    => $property->province,
-            'country'     => $property->country,
-            'latitude'    => $property->latitude,
-            'longitude'   => $property->longitude,
-            'main_image'  => $property->main_image,
+            'status_id' => $property->status_id,
+            'type' => $property->propertyType?->name ?? $property->type,
+            'operation' => $property->propertyOperation?->name ?? $property->operation,
+            'status' => $property->propertyStatus?->name ?? $property->status,
+            'price' => $property->price,
+            'surface' => $property->surface,
+            'rooms' => $property->rooms,
+            'bathrooms' => $property->bathrooms,
+            'address' => $property->address,
+            'city' => $property->city,
+            'locality' => $property->locality,
+            'province' => $property->province,
+            'country' => $property->country,
+            'latitude' => $property->latitude,
+            'longitude' => $property->longitude,
+            'main_image' => $property->main_image,
             'main_image_url' => $property->mainImageUrl(),
-            'images'      => $property->images->map(fn($img) => [
-                'id'   => $img->id,
-                'url'  => $img->url(),
+            'images' => $property->images->map(fn ($img) => [
+                'id' => $img->id,
+                'url' => $img->url(),
                 'type' => $img->type,
             ]),
-            'user'        => $property->user ? ['id' => $property->user->id, 'name' => $property->user->name] : null,
+            'user' => $property->user ? ['id' => $property->user->id, 'name' => $property->user->name] : null,
         ]);
     }
 
@@ -122,7 +119,7 @@ class PropertyController extends Controller
         $data['reference'] = match ($data['reference_mode']) {
             'prefix' => Property::generateReference($data['reference_prefix'] ?? null),
             'manual' => strtoupper(trim($data['reference_manual'] ?? '')),
-            default  => Property::generateReference(),
+            default => Property::generateReference(),
         };
 
         unset($data['reference_mode'], $data['reference_prefix'], $data['reference_manual']);
@@ -135,21 +132,21 @@ class PropertyController extends Controller
 
         foreach ($request->file('secondary_images', []) as $i => $file) {
             $property->images()->create([
-                'path'  => ImageOptimizer::store($file, 'properties'),
-                'type'  => 'secondary',
+                'path' => ImageOptimizer::store($file, 'properties'),
+                'type' => 'secondary',
                 'order' => $i,
             ]);
         }
 
         foreach ($request->file('floor_plans', []) as $i => $file) {
             $property->images()->create([
-                'path'  => ImageOptimizer::store($file, 'properties', 2000),
-                'type'  => 'floor_plan',
+                'path' => ImageOptimizer::store($file, 'properties', 2000),
+                'type' => 'floor_plan',
                 'order' => $i,
             ]);
         }
 
-        return redirect()->route(auth()->user()->panelPrefix() . '.properties.index')
+        return redirect()->route(auth()->user()->panelPrefix().'.properties.index')
             ->with('success', __('admin_properties.success_create'));
     }
 
@@ -161,15 +158,15 @@ class PropertyController extends Controller
 
         // Resolve reference
         $data['reference'] = match ($data['reference_mode']) {
-            'auto'   => Property::generateReference(),
+            'auto' => Property::generateReference(),
             'prefix' => Property::generateReference($data['reference_prefix'] ?? null),
             'manual' => strtoupper(trim($data['reference_manual'] ?? '')),
-            default  => $property->reference, // keep existing
+            default => $property->reference, // keep existing
         };
 
         unset($data['reference_mode'], $data['reference_prefix'], $data['reference_manual']);
 
-        if (!empty($data['remove_image'])) {
+        if (! empty($data['remove_image'])) {
             if ($property->main_image) {
                 ImageOptimizer::delete($property->main_image);
             }
@@ -192,7 +189,7 @@ class PropertyController extends Controller
                 ->where('property_id', $property->id)
                 ->get();
             foreach ($toDelete as $img) {
-                if (!str_starts_with($img->path, 'http')) {
+                if (! str_starts_with($img->path, 'http')) {
                     ImageOptimizer::delete($img->path);
                 }
                 $img->delete();
@@ -203,8 +200,8 @@ class PropertyController extends Controller
         foreach ($request->file('secondary_images', []) as $i => $file) {
             $order = ($property->secondaryImages()->max('order') ?? -1) + $i + 1;
             $property->images()->create([
-                'path'  => ImageOptimizer::store($file, 'properties'),
-                'type'  => 'secondary',
+                'path' => ImageOptimizer::store($file, 'properties'),
+                'type' => 'secondary',
                 'order' => $order,
             ]);
         }
@@ -213,13 +210,13 @@ class PropertyController extends Controller
         foreach ($request->file('floor_plans', []) as $i => $file) {
             $order = ($property->floorPlans()->max('order') ?? -1) + $i + 1;
             $property->images()->create([
-                'path'  => ImageOptimizer::store($file, 'properties', 2000),
-                'type'  => 'floor_plan',
+                'path' => ImageOptimizer::store($file, 'properties', 2000),
+                'type' => 'floor_plan',
                 'order' => $order,
             ]);
         }
 
-        return redirect()->route(auth()->user()->panelPrefix() . '.properties.index')
+        return redirect()->route(auth()->user()->panelPrefix().'.properties.index')
             ->with('success', __('admin_properties.success_update'));
     }
 
@@ -227,19 +224,19 @@ class PropertyController extends Controller
     {
         $this->authorize('delete', $property);
 
-        if ($property->main_image && !str_starts_with($property->main_image, 'http')) {
+        if ($property->main_image && ! str_starts_with($property->main_image, 'http')) {
             ImageOptimizer::delete($property->main_image);
         }
 
         foreach ($property->images as $img) {
-            if (!str_starts_with($img->path, 'http')) {
+            if (! str_starts_with($img->path, 'http')) {
                 ImageOptimizer::delete($img->path);
             }
         }
 
         $property->delete();
 
-        return redirect()->route(auth()->user()->panelPrefix() . '.properties.index')
+        return redirect()->route(auth()->user()->panelPrefix().'.properties.index')
             ->with('success', __('admin_properties.success_delete'));
     }
 
@@ -249,17 +246,17 @@ class PropertyController extends Controller
 
         // Strip any existing clone suffix (-1, -2, ...) to get the true base reference
         $baseRef = preg_replace('/-\d+$/', '', $property->reference);
-        $suffix  = 1;
-        $newRef  = '';
+        $suffix = 1;
+        $newRef = '';
 
         do {
-            $newRef = $baseRef . '-' . $suffix++;
+            $newRef = $baseRef.'-'.$suffix++;
         } while (Property::where('reference', $newRef)->exists());
 
         $clone = $property->replicate();
-        $clone->reference  = $newRef;
-        $clone->status_id  = PropertyStatus::where('name', 'disponible')->first()?->id;
-        $clone->user_id    = auth()->id();
+        $clone->reference = $newRef;
+        $clone->status_id = PropertyStatus::where('name', 'disponible')->first()?->id;
+        $clone->user_id = auth()->id();
 
         if ($clone->main_image) {
             $clone->main_image = ImageOptimizer::duplicate($clone->main_image) ?? $clone->main_image;
@@ -273,7 +270,7 @@ class PropertyController extends Controller
             return response()->json(['message' => $message]);
         }
 
-        return redirect()->route(auth()->user()->panelPrefix() . '.properties.index')
+        return redirect()->route(auth()->user()->panelPrefix().'.properties.index')
             ->with('success', $message);
     }
 }

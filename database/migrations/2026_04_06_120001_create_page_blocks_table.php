@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('order')->default(0);
             $table->json('data'); // Estructura flexible para cada componente
             $table->timestamps();
-            
+
             $table->index(['page_id', 'order']);
         });
     }

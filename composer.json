@@ -50,6 +50,12 @@
         "dev:logs": [
             "@php artisan pail --timeout=0"
         ],
+        "lint": [
+            "vendor/bin/pint --test"
+        ],
+        "lint:fix": [
+            "vendor/bin/pint"
+        ],
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"

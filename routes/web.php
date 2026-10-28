@@ -1,17 +1,17 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\PropertyController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\PageController;
-use App\Models\Page;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\PropertyController;
-use App\Http\Controllers\PropertyTypeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyOperationController;
 use App\Http\Controllers\PropertyStatusController;
+use App\Http\Controllers\PropertyTypeController;
 use App\Http\Controllers\PublicPropertyController;
 use App\Http\Controllers\SeoController;
+use App\Models\Page;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -97,7 +97,6 @@ Route::middleware(['auth', 'role:admin'])
 
     });
 
-
 /*
 |--------------------------------------------------------------------------
 | AGENT ROUTES
@@ -118,7 +117,7 @@ Route::middleware(['auth', 'role:agente'])
 
     });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 // Public pages (catch-all should be last)
 Route::get('/{page}', [PageController::class, 'show'])->name('pages.show');

@@ -17,6 +17,7 @@ class PropertyStatusController extends Controller
     public function index()
     {
         $statuses = PropertyStatus::orderBy('sort_order')->paginate(10);
+
         return view('property-statuses.index', compact('statuses'));
     }
 
@@ -51,7 +52,7 @@ class PropertyStatusController extends Controller
     public function update(Request $request, PropertyStatus $propertyStatus)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:100|unique:property_statuses,name,' . $propertyStatus->id,
+            'name' => 'required|string|max:100|unique:property_statuses,name,'.$propertyStatus->id,
             'label' => 'required|string|max:255',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
@@ -72,7 +73,7 @@ class PropertyStatusController extends Controller
 
         if ($count > 0) {
             throw ValidationException::withMessages([
-                'name' => "No se puede eliminar este estado de propiedad porque está en uso en $count propiedad(es)."
+                'name' => "No se puede eliminar este estado de propiedad porque está en uso en $count propiedad(es).",
             ]);
         }
 

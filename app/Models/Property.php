@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Support\ImageOptimizer;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Property extends Model
@@ -54,8 +54,8 @@ class Property extends Model
     protected function casts(): array
     {
         return [
-            'price'     => 'decimal:2',
-            'latitude'  => 'decimal:7',
+            'price' => 'decimal:2',
+            'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
         ];
     }
@@ -82,7 +82,7 @@ class Property extends Model
     {
         do {
             $digits = str_pad(random_int(0, 99999), 5, '0', STR_PAD_LEFT);
-            $ref    = $prefix ? strtoupper(trim($prefix)) . '-' . $digits : $digits;
+            $ref = $prefix ? strtoupper(trim($prefix)).'-'.$digits : $digits;
         } while (static::where('reference', $ref)->exists());
 
         return $ref;
@@ -129,13 +129,14 @@ class Property extends Model
 
     public function mainImageUrl(): ?string
     {
-        if (!$this->main_image) {
+        if (! $this->main_image) {
             return null;
         }
         if (str_starts_with($this->main_image, 'http')) {
             return $this->main_image;
         }
-        return asset('storage/' . $this->main_image);
+
+        return asset('storage/'.$this->main_image);
     }
 
     /** Miniatura para los listados (si la imagen está optimizada); si no, la imagen original. */
@@ -165,28 +166,30 @@ class Property extends Model
 
     public function formattedPrice(): string
     {
-        return number_format($this->price, 0, ',', '.') . ' €';
+        return number_format($this->price, 0, ',', '.').' €';
     }
 
     public function statusBadgeClass(): string
     {
         $status = $this->propertyStatus?->name ?? $this->status;
+
         return match ($status) {
             'disponible' => 'badge-status-available',
-            'reservado'  => 'badge-status-reserved',
+            'reservado' => 'badge-status-reserved',
             'vendido',
-            'alquilado'  => 'badge-status-closed',
-            default      => 'bg-light text-muted',
+            'alquilado' => 'badge-status-closed',
+            default => 'bg-light text-muted',
         };
     }
 
     public function operationBadgeClass(): string
     {
         $operation = $this->propertyOperation?->name ?? $this->operation;
+
         return match ($operation) {
-            'venta'    => 'badge-accent',
+            'venta' => 'badge-accent',
             'alquiler' => 'badge-accent-soft',
-            default    => '',
+            default => '',
         };
     }
 }

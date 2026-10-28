@@ -52,6 +52,8 @@ Si ejecutaste `php artisan db:seed`, se crea un usuario administrador:
 
 ```bash
 php artisan test          # Ejecutar pruebas
+composer lint             # Comprobar el estilo del codigo (Laravel Pint; la CI lo exige)
+composer lint:fix         # Corregir el estilo automaticamente
 php artisan migrate:fresh --seed
 ```
 
