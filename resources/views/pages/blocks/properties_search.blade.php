@@ -82,12 +82,7 @@
 
         <!-- Properties Display -->
         @php
-            $properties = \App\Models\Property::query()
-                ->when(request('search'), fn($q) => $q->where('title', 'like', '%' . request('search') . '%'))
-                ->when(request('type'), fn($q) => $q->where('type_id', request('type')))
-                ->when(request('min_price'), fn($q) => $q->where('price', '>=', request('min_price')))
-                ->when(request('max_price'), fn($q) => $q->where('price', '<=', request('max_price')))
-                ->paginate($itemsPerPage);
+            $properties = \App\Support\PublicProperties::search(request()->only(['search', 'type', 'min_price', 'max_price']), (int) $itemsPerPage);
         @endphp
 
         @if($properties->count() > 0)
