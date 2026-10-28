@@ -17,12 +17,14 @@ class AdminUserSeeder extends Seeder
     {
         $adminRole = Role::where('name', 'admin')->first();
 
-        User::create([
-            'name' => 'Administrador',
-            'email' => 'admin@kfacil.test',
-            'password' => Hash::make('password123'),
-            'role_id' => $adminRole->id,
-            'avatar' => null,
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@kfacil.test'],
+            [
+                'name' => 'Administrador',
+                'password' => Hash::make('password123'),
+                'role_id' => $adminRole->id,
+                'avatar' => null,
+            ],
+        );
     }
 }

@@ -15,6 +15,10 @@ class PropertySeeder extends Seeder
 
     public function run(): void
     {
+        if (Property::exists()) {
+            return;
+        }
+
         $adminId  = User::whereHas('role', fn($q) => $q->where('name', 'admin'))->value('id');
         $agentIds = User::whereHas('role', fn($q) => $q->where('name', 'agente'))->pluck('id')->toArray();
 

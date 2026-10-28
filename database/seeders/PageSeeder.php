@@ -20,7 +20,7 @@ class PageSeeder extends Seeder
             $admin = User::first();
         }
 
-        if (!$admin) {
+        if (!$admin || Page::exists()) {
             return;
         }
 
