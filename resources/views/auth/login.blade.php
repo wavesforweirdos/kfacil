@@ -58,13 +58,6 @@
             </button>
         </div>
 
-        <div class="text-center small">
-            ¿No tienes cuenta?
-            <a href="{{ route('register') }}">
-                Regístrate
-            </a>
-        </div>
-
     </form>
 
 </x-guest-layout>
