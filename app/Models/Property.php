@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -35,6 +36,18 @@ class Property extends Model
         'longitude',
         'main_image',
     ];
+
+    /** Estados que se muestran en la web pública (los vendidos y alquilados no). */
+    public const PUBLIC_STATUSES = ['disponible', 'reservado'];
+
+    /** Inmuebles visibles en la web pública. Si no tienen estado asignado se muestran. */
+    public function scopePubliclyVisible(Builder $query): Builder
+    {
+        return $query->where(function (Builder $q) {
+            $q->whereNull('status_id')
+                ->orWhereHas('propertyStatus', fn (Builder $s) => $s->whereIn('name', self::PUBLIC_STATUSES));
+        });
+    }
 
     protected function casts(): array
     {

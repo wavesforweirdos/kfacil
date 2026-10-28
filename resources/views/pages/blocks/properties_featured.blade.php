@@ -7,10 +7,7 @@
         default => 'grid-cols-1 md:grid-cols-3'
     };
     
-    $properties = \App\Models\Property::query()
-        ->latest()
-        ->limit($limit)
-        ->get();
+    $properties = \App\Support\PublicProperties::featured((int) $limit);
 @endphp
 
 <section class="py-20 px-4 bg-white">
