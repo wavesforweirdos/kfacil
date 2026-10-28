@@ -31,6 +31,10 @@ jobs:
       - name: Build the assets
         run: npm run build
 
+      # Estilo de código (Laravel Pint); en local: composer lint:fix
+      - name: Check the code style
+        run: vendor/bin/pint --test
+
       - name: Prepare the environment
         run: |
           cp .env.example .env

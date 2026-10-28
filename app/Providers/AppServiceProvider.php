@@ -2,13 +2,14 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Gate;
-use App\Models\User;
 use App\Models\Page;
 use App\Models\Property;
+use App\Models\User;
 use App\Policies\PagePolicy;
 use App\Policies\PropertyPolicy;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Pagination\Paginator::useBootstrapFive();
+        Paginator::useBootstrapFive();
 
         // Register policies
         Gate::policy(Page::class, PagePolicy::class);
@@ -46,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Register page-related gates
         Gate::define('edit-page', function (User $user, Page $page) {
-            return (new PagePolicy())->update($user, $page);
+            return (new PagePolicy)->update($user, $page);
         });
     }
 }

@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\Page;
 use App\Models\Property;
 use App\Models\PropertyStatus;
+use App\Models\Role;
+use App\Models\User;
 use Database\Seeders\PropertyOperationSeeder;
 use Database\Seeders\PropertyStatusSeeder;
 use Database\Seeders\PropertyTypeSeeder;
@@ -88,7 +90,7 @@ class SeoTest extends TestCase
     {
         Page::factory()->create(['slug' => 'servicios', 'published' => true]);
         $draft = Page::factory()->create(['slug' => 'borrador', 'published' => false]);
-        $staff = \App\Models\User::factory()->create(['role_id' => \App\Models\Role::firstOrCreate(['name' => 'admin'])->id]);
+        $staff = User::factory()->create(['role_id' => Role::firstOrCreate(['name' => 'admin'])->id]);
 
         $this->get('/servicios')->assertOk()->assertSee('<link rel="canonical" href="'.url('servicios').'">', false);
         $this->actingAs($staff)->get('/'.$draft->slug)->assertOk()->assertSee('noindex', false);

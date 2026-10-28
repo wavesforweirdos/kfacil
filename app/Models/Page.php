@@ -40,7 +40,7 @@ class Page extends Model
             if (empty($page->slug)) {
                 $page->slug = Str::slug($page->title);
             }
-            if (!isset($page->created_by)) {
+            if (! isset($page->created_by)) {
                 $page->created_by = auth()->id();
             }
         });

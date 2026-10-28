@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Property;
 use App\Models\Page;
+use App\Models\Property;
 
 class PublicPropertyController extends Controller
 {

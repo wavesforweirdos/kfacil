@@ -4,18 +4,23 @@ namespace App\Livewire\PageBuilder;
 
 use App\Models\Page;
 use App\Models\PageBlock;
-use Livewire\Component;
-use Livewire\Attributes\On;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class PageEditor extends Component
 {
     public Page $page;
+
     public array $blocks = [];
+
     public ?string $selectedBlockId = null;
+
     public int $previewVersion = 1;
+
     public string $previewDevice = 'desktop';
+
     public array $availableComponents = [
         'home' => [
             'hero' => 'Hero',
@@ -72,7 +77,7 @@ class PageEditor extends Component
         ]);
 
         $this->loadBlocks();
-        $this->selectedBlockId = (string)$block->id;
+        $this->selectedBlockId = (string) $block->id;
         $this->refreshPreview();
         $this->dispatch('block-added', $block->id);
     }
@@ -119,7 +124,7 @@ class PageEditor extends Component
     {
         $block = PageBlock::find($blockId);
 
-        if (!$block || $block->page_id !== $this->page->id) {
+        if (! $block || $block->page_id !== $this->page->id) {
             return;
         }
 
@@ -135,7 +140,7 @@ class PageEditor extends Component
             'image',
         ];
 
-        if (!in_array($field, $allowedFields, true)) {
+        if (! in_array($field, $allowedFields, true)) {
             return;
         }
 
@@ -152,13 +157,13 @@ class PageEditor extends Component
     {
         $block = PageBlock::find($blockId);
 
-        if (!$block || $block->page_id !== $this->page->id) {
+        if (! $block || $block->page_id !== $this->page->id) {
             return;
         }
 
         $schema = PageBlock::getComponentSchema($block->component);
 
-        if (!array_key_exists($field, $schema)) {
+        if (! array_key_exists($field, $schema)) {
             return;
         }
 
@@ -219,7 +224,7 @@ class PageEditor extends Component
 
     public function setPreviewDevice(string $device)
     {
-        if (!in_array($device, ['desktop', 'tablet', 'mobile'], true)) {
+        if (! in_array($device, ['desktop', 'tablet', 'mobile'], true)) {
             return;
         }
 

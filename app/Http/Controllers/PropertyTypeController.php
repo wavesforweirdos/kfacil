@@ -17,6 +17,7 @@ class PropertyTypeController extends Controller
     public function index()
     {
         $types = PropertyType::orderBy('sort_order')->paginate(10);
+
         return view('property-types.index', compact('types'));
     }
 
@@ -51,7 +52,7 @@ class PropertyTypeController extends Controller
     public function update(Request $request, PropertyType $propertyType)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:100|unique:property_types,name,' . $propertyType->id,
+            'name' => 'required|string|max:100|unique:property_types,name,'.$propertyType->id,
             'label' => 'required|string|max:255',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
@@ -72,7 +73,7 @@ class PropertyTypeController extends Controller
 
         if ($count > 0) {
             throw ValidationException::withMessages([
-                'name' => "No se puede eliminar este tipo de propiedad porque está en uso en $count propiedad(es)."
+                'name' => "No se puede eliminar este tipo de propiedad porque está en uso en $count propiedad(es).",
             ]);
         }
 
