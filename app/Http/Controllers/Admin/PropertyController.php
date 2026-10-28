@@ -11,6 +11,7 @@ use App\Models\PropertyStatus;
 use App\Models\PropertyType;
 use App\Models\PropertyOperation;
 use App\Models\User;
+use App\Support\ImageOptimizer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -127,14 +128,14 @@ class PropertyController extends Controller
         unset($data['reference_mode'], $data['reference_prefix'], $data['reference_manual']);
 
         if ($request->hasFile('main_image')) {
-            $data['main_image'] = $request->file('main_image')->store('properties', 'public');
+            $data['main_image'] = ImageOptimizer::store($request->file('main_image'), 'properties');
         }
 
         $property = Property::create($data);
 
         foreach ($request->file('secondary_images', []) as $i => $file) {
             $property->images()->create([
-                'path'  => $file->store('properties', 'public'),
+                'path'  => ImageOptimizer::store($file, 'properties'),
                 'type'  => 'secondary',
                 'order' => $i,
             ]);
@@ -142,7 +143,7 @@ class PropertyController extends Controller
 
         foreach ($request->file('floor_plans', []) as $i => $file) {
             $property->images()->create([
-                'path'  => $file->store('properties', 'public'),
+                'path'  => ImageOptimizer::store($file, 'properties', 2000),
                 'type'  => 'floor_plan',
                 'order' => $i,
             ]);
@@ -170,16 +171,16 @@ class PropertyController extends Controller
 
         if (!empty($data['remove_image'])) {
             if ($property->main_image) {
-                Storage::disk('public')->delete($property->main_image);
+                ImageOptimizer::delete($property->main_image);
             }
             $data['main_image'] = null;
         }
 
         if ($request->hasFile('main_image')) {
             if ($property->main_image) {
-                Storage::disk('public')->delete($property->main_image);
+                ImageOptimizer::delete($property->main_image);
             }
-            $data['main_image'] = $request->file('main_image')->store('properties', 'public');
+            $data['main_image'] = ImageOptimizer::store($request->file('main_image'), 'properties');
         }
 
         unset($data['remove_image']);
@@ -192,7 +193,7 @@ class PropertyController extends Controller
                 ->get();
             foreach ($toDelete as $img) {
                 if (!str_starts_with($img->path, 'http')) {
-                    Storage::disk('public')->delete($img->path);
+                    ImageOptimizer::delete($img->path);
                 }
                 $img->delete();
             }
@@ -202,7 +203,7 @@ class PropertyController extends Controller
         foreach ($request->file('secondary_images', []) as $i => $file) {
             $order = ($property->secondaryImages()->max('order') ?? -1) + $i + 1;
             $property->images()->create([
-                'path'  => $file->store('properties', 'public'),
+                'path'  => ImageOptimizer::store($file, 'properties'),
                 'type'  => 'secondary',
                 'order' => $order,
             ]);
@@ -212,7 +213,7 @@ class PropertyController extends Controller
         foreach ($request->file('floor_plans', []) as $i => $file) {
             $order = ($property->floorPlans()->max('order') ?? -1) + $i + 1;
             $property->images()->create([
-                'path'  => $file->store('properties', 'public'),
+                'path'  => ImageOptimizer::store($file, 'properties', 2000),
                 'type'  => 'floor_plan',
                 'order' => $order,
             ]);
@@ -227,12 +228,12 @@ class PropertyController extends Controller
         $this->authorize('delete', $property);
 
         if ($property->main_image && !str_starts_with($property->main_image, 'http')) {
-            Storage::disk('public')->delete($property->main_image);
+            ImageOptimizer::delete($property->main_image);
         }
 
         foreach ($property->images as $img) {
             if (!str_starts_with($img->path, 'http')) {
-                Storage::disk('public')->delete($img->path);
+                ImageOptimizer::delete($img->path);
             }
         }
 
@@ -260,12 +261,8 @@ class PropertyController extends Controller
         $clone->status_id  = PropertyStatus::where('name', 'disponible')->first()?->id;
         $clone->user_id    = auth()->id();
 
-        if ($clone->main_image && !str_starts_with($clone->main_image, 'http')) {
-            $copy = 'properties/' . Str::uuid() . '.' . pathinfo($clone->main_image, PATHINFO_EXTENSION);
-
-            if (Storage::disk('public')->exists($clone->main_image) && Storage::disk('public')->copy($clone->main_image, $copy)) {
-                $clone->main_image = $copy;
-            }
+        if ($clone->main_image) {
+            $clone->main_image = ImageOptimizer::duplicate($clone->main_image) ?? $clone->main_image;
         }
 
         $clone->save();

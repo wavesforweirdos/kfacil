@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use App\Support\ImageOptimizer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Property extends Model
 {
@@ -134,6 +136,31 @@ class Property extends Model
             return $this->main_image;
         }
         return asset('storage/' . $this->main_image);
+    }
+
+    /** Miniatura para los listados (si la imagen está optimizada); si no, la imagen original. */
+    public function mainImageThumbUrl(): ?string
+    {
+        if (! $this->main_image) {
+            return null;
+        }
+
+        if (str_starts_with($this->main_image, 'http')) {
+            return $this->main_image;
+        }
+
+        return asset('storage/'.ImageOptimizer::thumbOrOriginal($this->main_image));
+    }
+
+    public function slug(): string
+    {
+        return Str::slug($this->title) ?: 'inmueble';
+    }
+
+    /** URL pública canónica: /inmuebles/{id}/{slug-del-título}. */
+    public function publicUrl(): string
+    {
+        return route('public.properties.show', [$this, $this->slug()]);
     }
 
     public function formattedPrice(): string
