@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             PropertyOperationSeeder::class,
             PropertyStatusSeeder::class,
             PropertySeeder::class,
+            PageSeeder::class,
         ]);
     }
 }

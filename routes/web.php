@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\PageController;
+use App\Models\Page;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\PropertyTypeController;
@@ -11,8 +14,10 @@ use App\Http\Controllers\PublicPropertyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    $home = Page::where('type', 'home')->where('published', true)->first();
+
+    return $home ? app(PageController::class)->show($home) : view('welcome');
+})->name('home');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
@@ -37,9 +42,9 @@ Route::middleware('auth')->group(function () {
 */
 
 Route::middleware('auth')->group(function () {
-    Route::resource('property-types', PropertyTypeController::class);
-    Route::resource('property-operations', PropertyOperationController::class);
-    Route::resource('property-statuses', PropertyStatusController::class);
+    Route::resource('property-types', PropertyTypeController::class)->except(['show']);
+    Route::resource('property-operations', PropertyOperationController::class)->except(['show']);
+    Route::resource('property-statuses', PropertyStatusController::class)->except(['show']);
 });
 
 /*
@@ -54,6 +59,12 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('pages', PageController::class)->except(['show']);
     Route::put('pages/{page}/publish', [PageController::class, 'publish'])->name('pages.publish');
     Route::put('pages/{page}/unpublish', [PageController::class, 'unpublish'])->name('pages.unpublish');
+});
+
+// Formulario de contacto de la web pública y bandeja de mensajes del CRM
+Route::post('/contacto', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
+Route::middleware('auth')->group(function () {
+    Route::resource('messages', ContactMessageController::class)->only(['index', 'show', 'destroy']);
 });
 
 // Public properties (fixed property-detail structure)
@@ -77,7 +88,7 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::resource('users', UserController::class);
 
-        Route::resource('properties', PropertyController::class);
+        Route::resource('properties', PropertyController::class)->except(['create', 'edit']);
         Route::post('properties/{property}/clone', [PropertyController::class, 'clone'])->name('properties.clone');
 
     });
@@ -98,9 +109,7 @@ Route::middleware(['auth', 'role:agente'])
             return view('admin.dashboard');
         })->name('dashboard');
 
-        Route::resource('users', UserController::class);
-
-        Route::resource('properties', PropertyController::class);
+        Route::resource('properties', PropertyController::class)->except(['create', 'edit']);
         Route::post('properties/{property}/clone', [PropertyController::class, 'clone'])->name('properties.clone');
 
     });

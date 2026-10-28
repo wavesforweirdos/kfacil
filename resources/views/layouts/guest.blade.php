@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'KFacil') }}</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -45,7 +45,7 @@
 
         <!-- Footer -->
         <div class="mt-4 small text-center text-body-secondary">
-            © {{ date('Y') }} {{ config('app.name', 'Laravel') }}
+            © {{ date('Y') }} {{ config('app.name', 'KFacil') }}
         </div>
 
     </div>

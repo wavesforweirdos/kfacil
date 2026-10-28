@@ -12,6 +12,7 @@ use App\Models\PropertyType;
 use App\Models\PropertyOperation;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PropertyController extends Controller
 {
@@ -25,6 +26,7 @@ class PropertyController extends Controller
         $dir = $request->get('dir') === 'asc' ? 'asc' : 'desc';
 
         $properties = Property::query()
+            ->select('properties.*')
             ->with(['user', 'propertyType', 'propertyOperation', 'propertyStatus'])
             ->when($request->filled('reference'), fn($q) => $q->where('reference', 'like', '%' . $request->reference . '%'))
             ->when($request->filled('title'), fn($q) => $q->where('title', 'like', '%' . $request->title . '%'))
@@ -34,7 +36,7 @@ class PropertyController extends Controller
             ->when($request->filled('status'), fn($q) => $q->whereHas('propertyStatus', fn($sq) => $sq->where('name', $request->status)))
             ->when($request->filled('price_min'), fn($q) => $q->where('price', '>=', $request->price_min))
             ->when($request->filled('price_max'), fn($q) => $q->where('price', '<=', $request->price_max))
-            ->orderBy($sort, $dir)
+            ->tap(fn($q) => $this->applySort($q, $sort, $dir))
             ->paginate(10)
             ->withQueryString();
 
@@ -43,6 +45,29 @@ class PropertyController extends Controller
         $statuses = PropertyStatus::active()->get(['id', 'name', 'label']);
 
         return view('admin.properties.index', compact('properties', 'sort', 'dir', 'types', 'operations', 'statuses'));
+    }
+
+    /**
+     * type, operation y status se ordenan por su tabla de catálogo (nombre), no por las
+     * columnas de texto antiguas de properties, que los inmuebles nuevos no rellenan.
+     */
+    private function applySort($query, string $sort, string $dir): void
+    {
+        $catalogues = [
+            'type' => ['property_types', 'type_id'],
+            'operation' => ['property_operations', 'operation_id'],
+            'status' => ['property_statuses', 'status_id'],
+        ];
+
+        if (isset($catalogues[$sort])) {
+            [$table, $foreign] = $catalogues[$sort];
+            $query->leftJoin($table, "{$table}.id", '=', "properties.{$foreign}")
+                ->orderBy("{$table}.name", $dir);
+        } else {
+            $query->orderBy("properties.{$sort}", $dir);
+        }
+
+        $query->orderBy('properties.id', $dir);
     }
 
     public function show(Property $property)
@@ -222,6 +247,15 @@ class PropertyController extends Controller
         $clone->reference  = $newRef;
         $clone->status_id  = PropertyStatus::where('name', 'disponible')->first()?->id;
         $clone->user_id    = auth()->id();
+
+        if ($clone->main_image && !str_starts_with($clone->main_image, 'http')) {
+            $copy = 'properties/' . Str::uuid() . '.' . pathinfo($clone->main_image, PATHINFO_EXTENSION);
+
+            if (Storage::disk('public')->exists($clone->main_image) && Storage::disk('public')->copy($clone->main_image, $copy)) {
+                $clone->main_image = $copy;
+            }
+        }
+
         $clone->save();
 
         $message = __('admin_properties.success_clone', ['ref' => $newRef]);

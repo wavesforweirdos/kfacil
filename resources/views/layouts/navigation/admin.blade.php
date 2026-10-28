@@ -1,12 +1,6 @@
 @php
     $menuItems = [
         [
-            'label' => __('admin_sidebar.users'),
-            'route' => route(auth()->user()->panelPrefix() . '.users.index'),
-            'icon' => 'fa-users',
-            'color' => 'teal',
-        ],
-        [
             'label' => __('admin_sidebar.properties'),
             'route' => route(auth()->user()->panelPrefix() . '.properties.index'),
             'icon' => 'fa-building',
@@ -18,14 +12,31 @@
             'icon' => 'fa-file-lines',
             'color' => 'blue',
         ],
+        [
+            'label' => __('admin_sidebar.messages'),
+            'route' => route('messages.index'),
+            'icon' => 'fa-envelope',
+            'color' => 'blue',
+            'badge' => \App\Models\ContactMessage::unread()->count(),
+        ],
     ];
+
+    // Solo los administradores gestionan usuarios.
+    if (auth()->user()->isAdmin()) {
+        array_unshift($menuItems, [
+            'label' => __('admin_sidebar.users'),
+            'route' => route('admin.users.index'),
+            'icon' => 'fa-users',
+            'color' => 'teal',
+        ]);
+    }
 @endphp
 
 <aside class="bg-light border-end min-vh-100 p-4" style="width: 260px;">
 
     <!-- Logo -->
     <div class="mb-4">
-        <a href="{{ url('/admin') }}" class="d-flex align-items-center text-decoration-none gap-3">
+        <a href="{{ url('/' . auth()->user()->panelPrefix()) }}" class="d-flex align-items-center text-decoration-none gap-3">
             <img src="{{ asset('images/logo_color.png') }}" alt="Admin Logo" style="height:40px;">
             <h2 class="h6 mb-0 fw-bold text-dark text-uppercase">
                 {{ config('app.name', 'KFacil Inmobiliaria') }}
@@ -67,7 +78,8 @@
                         </div>
                     </div>
                 @else
-                    <x-admin.sidebar-card :route="$item['route']" :icon="$item['icon']" :label="$item['label']"
+                    <x-admin.sidebar-card :route="$item['route']" :icon="$item['icon']"
+                        :label="$item['label'] . (($item['badge'] ?? 0) > 0 ? ' (' . $item['badge'] . ')' : '')"
                         :color="$item['color']" />
                 @endif
             </div>
