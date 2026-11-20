@@ -6,7 +6,7 @@ Guia breve para ejecutar la aplicacion en entorno local.
 
 ## Requisitos
 
-- PHP 8.3+
+- PHP 8.6+
 - Composer
 - Node.js 20+ y npm
 - MySQL 8+
